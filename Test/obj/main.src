@@ -1,0 +1,271 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -optsize -noreduceopt -nomodsect -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"SRC\MAIN.C"
+	.assume ADL=1
+	SEGMENT CODE
+;    1	#include <string.h>
+;    2	#include <stdlib.h>
+;    3	#include <stdio.h>
+;    4	#include <tice.h>
+;    5	#include <fileioc.h>
+;    6	#include <stdbool.h>
+;    7	
+;    8	#define DBGO (char*)0xFB0000
+;    9	
+;   10	int main(void){
+_main:
+	LD	HL,-8
+	CALL	__frameset
+;   11		ti_var_t fVar;
+;   12		char i;
+;   13		char* buf, *str, *str2;
+;   14		size_t S;
+;   15	
+;   16		os_ClrHome();
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+;   17	
+;   18		ti_CloseAll();
+	CALL	_ti_CloseAll
+;   19	
+;   20		fVar = ti_Open("BFVAR", "w+");
+	LD	BC,L__0
+	PUSH	BC
+	LD	BC,L__1
+	PUSH	BC
+	CALL	_ti_Open
+	POP	BC
+	POP	BC
+	LD	(IX+-2),A
+;   21		str = (char*)0xFFFFFF;
+;   22		str2 = malloc(16);
+	LD	BC,16
+	PUSH	BC
+	CALL	_malloc
+	POP	BC
+	LD	(IX+-8),HL
+;   23		buf = malloc(16);
+	LD	BC,16
+	PUSH	BC
+	CALL	_malloc
+	POP	BC
+	LD	(IX+-5),HL
+;   24		for(i = 0;i<16;i++){
+	LD	(IX+-1),0
+	JR	L_6
+L_4:
+;   25			str2[i] = i*2;
+	LD	A,(IX+-1)
+	ADD	A,A
+	LD	D,A
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	L,(IX+-1)
+	LD	BC,(IX+-8)
+	ADD	HL,BC
+	LD	(HL),D
+;   26			buf[i]  = i;
+	LD	A,(IX+-1)
+	SEXT	HL
+	LD	L,(IX+-1)
+	LD	A,(IX+-1)
+	LD	BC,(IX+-5)
+	ADD	HL,BC
+	LD	(HL),A
+	INC	(IX+-1)
+;   27		}
+L_6:
+	LD	A,(IX+-1)
+	CP	A,16
+	CALL	__setflag
+	JP	M,L_4
+;   28		
+;   29		sprintf(DBGO, "BUF: %X\n", buf);
+	LD	BC,(IX+-5)
+	PUSH	BC
+	LD	BC,L__3
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+;   30		sprintf(DBGO, "STR2: %X\n", str2);
+	LD	BC,(IX+-8)
+	PUSH	BC
+	LD	BC,L__4
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+;   31		sprintf(DBGO, "fVar VAT: %X, DATA: %X\n", ti_GetVATPtr(fVar), ti_GetDataPtr(fVar));
+	LD	C,(IX+-2)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_GetDataPtr
+	POP	BC
+	PUSH	HL
+	LD	C,(IX+-2)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_GetVATPtr
+	POP	BC
+	PUSH	HL
+	LD	BC,L__5
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   32		*str = 2;
+	LD	A,2
+	LD	(16777215),A
+;   33		sprintf(DBGO, "BUF: %X\n", buf);
+	LD	BC,(IX+-5)
+	PUSH	BC
+	LD	BC,L__6
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+;   34		sprintf(DBGO, "STR2: %X\n", str2);
+	LD	BC,(IX+-8)
+	PUSH	BC
+	LD	BC,L__7
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+;   35		sprintf(DBGO, "fVar VAT: %X, DATA: %X\n", ti_GetVATPtr(fVar), ti_GetDataPtr(fVar));
+	LD	C,(IX+-2)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_GetDataPtr
+	POP	BC
+	PUSH	HL
+	LD	C,(IX+-2)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_GetVATPtr
+	POP	BC
+	PUSH	HL
+	LD	BC,L__8
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+;   36		*str = 2;
+	LD	A,2
+	LD	(16777215),A
+;   37		
+;   38		free(str2);
+	LD	BC,(IX+-8)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+;   39		free(buf);
+	LD	BC,(IX+-5)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+	OR	A,A
+;   40	
+;   41		return 0;
+	SBC	HL,HL
+;   42	}
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _main ***************************
+;Name                         Addr/Register   Size   Type
+;_free                               IMPORT  -----   function
+;_ti_GetVATPtr                       IMPORT  -----   function
+;_ti_GetDataPtr                      IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_malloc                             IMPORT  -----   function
+;_ti_Open                            IMPORT  -----   function
+;_ti_CloseAll                        IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;str2                                  IX-8      3   variable
+;buf                                   IX-5      3   variable
+;fVar                                  IX-2      1   variable
+;i                                     IX-1      1   variable
+
+
+; Stack Frame Size: 14 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__0:
+	DB	"w+"
+	DB	0
+L__1:
+	DB	"BFVAR"
+	DB	0
+L__3:
+	DB	"BUF: %X"
+	DB	10,0
+L__4:
+	DB	"STR2: %X"
+	DB	10,0
+L__5:
+	DB	"fVar VAT: %X, DATA: %X"
+	DB	10,0
+L__6:
+	DB	"BUF: %X"
+	DB	10,0
+L__7:
+	DB	"STR2: %X"
+	DB	10,0
+L__8:
+	DB	"fVar VAT: %X, DATA: %X"
+	DB	10,0
+	XREF _sprintf:ROM
+	XREF _ti_GetVATPtr:ROM
+	XREF _ti_GetDataPtr:ROM
+	XREF _ti_Open:ROM
+	XREF _ti_CloseAll:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _free:ROM
+	XREF _malloc:ROM
+	XREF __frameset:ROM
+	XREF __setflag:ROM
+	XDEF _main
+	END

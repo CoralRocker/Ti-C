@@ -1,0 +1,3 @@
+[submodule "Ti-Brainfuck"]
+	path = Ti-Brainfuck
+	url = git@github.com:CoralRocker/Ti-Brainfuck.git

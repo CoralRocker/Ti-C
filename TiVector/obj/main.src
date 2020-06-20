@@ -1,0 +1,527 @@
+; Zilog eZ80 ANSI C Compiler Release 3.4
+; -optsize -noreduceopt -nomodsect -peephole -globalopt
+; -localcse -const=ROM 
+	FILE	"SRC\MAIN.C"
+	.assume ADL=1
+	SEGMENT CODE
+_initVec8:
+	LD	HL,-3
+	CALL	__frameset
+	LD	BC,6
+	PUSH	BC
+	CALL	_malloc
+	POP	BC
+	LD	(IX+-3),HL
+	LD	IY,(IX+-3)
+	LD	BC,0
+	LD	(IY+0),BC
+	LD	(IY+3),BC
+	LD	HL,(IX+-3)
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _initVec8 ***************************
+;Name                         Addr/Register   Size   Type
+;_malloc                             IMPORT  -----   function
+;v8                                    IX-3      3   variable
+
+
+; Stack Frame Size: 9 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+_freeVec8:
+	CALL	__frameset0
+	LD	IY,(IX+6)
+	LD	BC,(IY+0)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+	LD	BC,(IX+6)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _freeVec8 ***************************
+;Name                         Addr/Register   Size   Type
+;_free                               IMPORT  -----   function
+;v                                     IX+6      3   parameter
+
+
+; Stack Frame Size: 9 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+_resizeVec8:
+	LD	HL,-1
+	CALL	__frameset
+	CALL	_ti_CloseAll
+	LD	BC,L__2
+	PUSH	BC
+	LD	BC,L__3
+	PUSH	BC
+	CALL	_ti_Open
+	POP	BC
+	POP	BC
+	LD	(IX+-1),A
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	LD	BC,1
+	PUSH	BC
+	CALL	_ti_SetArchiveStatus
+	POP	BC
+	POP	BC
+	PUSH	HL
+	LD	BC,L__4
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	LD	IY,(IX+6)
+	LD	BC,(IY+3)
+	PUSH	BC
+	LD	BC,1
+	PUSH	BC
+	LD	BC,(IY+0)
+	PUSH	BC
+	CALL	_ti_Write
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	BC,L__5
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	LD	IY,(IX+6)
+	LD	BC,(IY+0)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+	LD	IY,(IX+6)
+	LD	BC,(IY+3)
+	INC	BC
+	LD	(IY+3),BC
+	LD	BC,(IY+3)
+	PUSH	BC
+	CALL	_malloc
+	POP	BC
+	LD	IY,(IX+6)
+	LD	(IY+0),HL
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_Rewind
+	POP	BC
+	LD	A,(IX+-1)
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _resizeVec8 ***************************
+;Name                         Addr/Register   Size   Type
+;_ti_Rewind                          IMPORT  -----   function
+;_malloc                             IMPORT  -----   function
+;_free                               IMPORT  -----   function
+;_ti_Write                           IMPORT  -----   function
+;_ti_SetArchiveStatus                IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_ti_Open                            IMPORT  -----   function
+;_ti_CloseAll                        IMPORT  -----   function
+;fVar                                  IX-1      1   variable
+;v                                     IX+6      3   parameter
+
+
+; Stack Frame Size: 10 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__2:
+	DB	"w+"
+	DB	0
+L__3:
+	DB	"ARCVECTOR"
+	DB	0
+L__4:
+	DB	"ARCHIVE STATUS SET %d"
+	DB	10,0
+L__5:
+	DB	"Variable Written"
+	DB	10,0
+	SEGMENT CODE
+_pushBackVector:
+	LD	HL,-1
+	CALL	__frameset
+	LD	IY,(IX+6)
+	LD	BC,(IY+3)
+	OR	A,A
+	SBC	HL,HL
+	OR	A,A
+	SBC	HL,BC
+	JR	NC,L_4
+	LD	BC,(IX+6)
+	PUSH	BC
+	CALL	_resizeVec8
+	POP	BC
+	LD	(IX+-1),A
+	LD	IY,(IX+6)
+	LD	IY,(IY+3)
+	LEA	BC,IY+-1
+	PUSH	BC
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_GetDataPtr
+	POP	BC
+	PUSH	HL
+	LD	IY,(IX+6)
+	LD	BC,(IY+0)
+	PUSH	BC
+	CALL	_memcpy
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	IY,(IX+6)
+	LD	IY,(IY+3)
+	LEA	BC,IY+-1
+	LD	IY,(IX+6)
+	LD	HL,(IY+0)
+	ADD	HL,BC
+	LD	A,(IX+9)
+	LD	(HL),A
+	LD	C,(IX+-1)
+	LD	B,0
+	PUSH	BC
+	CALL	_ti_Close
+	POP	BC
+	JR	L_5
+L_4:
+	LD	BC,1
+	PUSH	BC
+	CALL	_malloc
+	POP	BC
+	LD	IY,(IX+6)
+	LD	(IY+0),HL
+	LD	HL,(IY+0)
+	LD	A,(IX+9)
+	LD	(HL),A
+	LD	BC,1
+	LD	(IY+3),BC
+L_5:
+	LD	A,(IX+9)
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _pushBackVector ***************************
+;Name                         Addr/Register   Size   Type
+;_malloc                             IMPORT  -----   function
+;_ti_Close                           IMPORT  -----   function
+;_ti_GetDataPtr                      IMPORT  -----   function
+;_memcpy                             IMPORT  -----   function
+;fVar                                  IX-1      1   variable
+;val                                   IX+9      1   parameter
+;v                                     IX+6      3   parameter
+
+
+; Stack Frame Size: 13 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+_atVector:
+	CALL	__frameset0
+	LD	BC,(IX+9)
+	LD	IY,(IX+6)
+	LD	HL,(IY+0)
+	ADD	HL,BC
+	LD	A,(HL)
+;    1	#include <stdint.h>
+;    2	#include <stdlib.h>
+;    3	#include <tice.h>
+;    4	#include "VectorArchive.h"
+;    5	#include <stdio.h>
+;    6	#include <debug.h>
+;    7	
+;    8	void printOutVector(vec8_t* v){
+;    9		char* str;
+;   10		int i;
+;   11	
+;   12		for(i = 0; i < v->size; i++){
+;   13			str = malloc(32);
+;   14			sprintf(str, "%X: %d ", i, atVector(v, i));
+;   15			os_PutStrFull(str);
+;   16			free(str);
+;   17		}
+;   18	}
+;   19	
+;   20	int main(void){
+;   21		vec8_t* v;
+;   22		int i;
+;   23	
+;   24		os_ClrHome();
+;   25		
+;   26		v = initVec8();
+;   27		sprintf((char*)0xFB0000, "Initialized Vector\0");
+;   28	
+;   29		for(i = 0; i < 23;i++){
+;   30			sprintf((char*)0xFB0000, "Pushing back vector %d\n\0", i);
+;   31			pushBackVector(v, i*2);
+;   32			sprintf((char*)0xFB0000, "Pushed back vector %d, DATA ARR: %X\n\n\0", i, v->arr);
+;   33		}
+;   34		//dbg_sprintf(dbgout, "Pushed back all to vector, %d", v->size);
+;   35	
+;   36	
+;   37		//printOutVector(v);
+;   38	
+;   39		while(!os_GetCSC());
+;   40	
+;   41		return 0;
+;   42	}
+;   43	
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _atVector ***************************
+;Name                         Addr/Register   Size   Type
+;index                                 IX+9      3   parameter
+;v                                     IX+6      3   parameter
+
+
+; Stack Frame Size: 12 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+_printOutVector:
+	LD	HL,-6
+	CALL	__frameset
+	LD	BC,0
+	LD	(IX+-3),BC
+	JR	L_11
+L_9:
+	LD	BC,32
+	PUSH	BC
+	CALL	_malloc
+	POP	BC
+	LD	(IX+-6),HL
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,(IX+6)
+	PUSH	BC
+	CALL	_atVector
+	POP	BC
+	POP	BC
+	UEXT	HL
+	LD	L,A
+	PUSH	HL
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,L__10
+	PUSH	BC
+	LD	BC,(IX+-6)
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	BC,(IX+-6)
+	PUSH	BC
+	CALL	_os_PutStrFull
+	POP	BC
+	LD	BC,(IX+-6)
+	PUSH	BC
+	CALL	_free
+	POP	BC
+	LD	BC,(IX+-3)
+	INC	BC
+	LD	(IX+-3),BC
+L_11:
+	LD	IY,(IX+6)
+	LD	BC,(IY+3)
+	LD	HL,(IX+-3)
+	OR	A,A
+	SBC	HL,BC
+	JR	C,L_9
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _printOutVector ***************************
+;Name                         Addr/Register   Size   Type
+;_free                               IMPORT  -----   function
+;_os_PutStrFull                      IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_malloc                             IMPORT  -----   function
+;str                                   IX-6      3   variable
+;i                                     IX-3      3   variable
+;v                                     IX+6      3   parameter
+
+
+; Stack Frame Size: 15 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__10:
+	DB	"%X: %d "
+	DB	0
+	SEGMENT CODE
+_main:
+	LD	HL,-6
+	CALL	__frameset
+	LD	BC,_asm_ClrLCD
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_HomeUp
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	LD	BC,_asm_DrawStatusBar
+	PUSH	BC
+	CALL	__OS
+	POP	BC
+	CALL	_initVec8
+	LD	(IX+-6),HL
+	LD	BC,L__13
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	LD	BC,0
+	LD	(IX+-3),BC
+	JR	L_19
+L_17:
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,L__14
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	A,(IX+-3)
+	ADD	A,A
+	LD	C,A
+	LD	B,0
+	PUSH	BC
+	LD	BC,(IX+-6)
+	PUSH	BC
+	CALL	_pushBackVector
+	POP	BC
+	POP	BC
+	LD	IY,(IX+-6)
+	LD	BC,(IY+0)
+	PUSH	BC
+	LD	BC,(IX+-3)
+	PUSH	BC
+	LD	BC,L__15
+	PUSH	BC
+	LD	BC,16449536
+	PUSH	BC
+	CALL	_sprintf
+	POP	BC
+	POP	BC
+	POP	BC
+	POP	BC
+	LD	BC,(IX+-3)
+	INC	BC
+	LD	(IX+-3),BC
+L_19:
+	LD	BC,23
+	LD	HL,(IX+-3)
+	OR	A,A
+	SBC	HL,BC
+	CALL	__setflag
+	JP	M,L_17
+L_21:
+	CALL	_os_GetCSC
+	OR	A,A
+	JR	Z,L_21
+	OR	A,A
+	SBC	HL,HL
+	LD	SP,IX
+	POP	IX
+	RET	
+
+
+;**************************** _main ***************************
+;Name                         Addr/Register   Size   Type
+;_os_GetCSC                          IMPORT  -----   function
+;_sprintf                            IMPORT  -----   function
+;_asm_DrawStatusBar                  IMPORT  -----   function
+;_asm_HomeUp                         IMPORT  -----   function
+;_asm_ClrLCD                         IMPORT  -----   function
+;__OS                                IMPORT  -----   function
+;v                                     IX-6      3   variable
+;i                                     IX-3      3   variable
+
+
+; Stack Frame Size: 12 (bytes)
+;       Spill Code: 0 (instruction)
+
+
+	SEGMENT STRSECT
+L__13:
+	DB	"Initialized Vector"
+	DB	0,0
+L__14:
+	DB	"Pushing back vector %d"
+	DB	10,0,0
+L__15:
+	DB	"Pushed back vector %d, DATA ARR: %X"
+	DB	10,10,0,0
+	XREF _ti_GetDataPtr:ROM
+	XREF _ti_SetArchiveStatus:ROM
+	XREF _ti_Rewind:ROM
+	XREF _ti_Write:ROM
+	XREF _ti_Close:ROM
+	XREF _ti_Open:ROM
+	XREF _ti_CloseAll:ROM
+	XREF _sprintf:ROM
+	XREF _memcpy:ROM
+	XREF _asm_DrawStatusBar:ROM
+	XREF _asm_ClrLCD:ROM
+	XREF _asm_HomeUp:ROM
+	XREF __OS:ROM
+	XREF _os_GetCSC:ROM
+	XREF _os_PutStrFull:ROM
+	XREF _free:ROM
+	XREF _malloc:ROM
+	XREF __frameset0:ROM
+	XREF __frameset:ROM
+	XREF __setflag:ROM
+	XDEF _main
+	XDEF _printOutVector
+	XDEF _atVector
+	XDEF _pushBackVector
+	XDEF _resizeVec8
+	XDEF _freeVec8
+	XDEF _initVec8
+	END
